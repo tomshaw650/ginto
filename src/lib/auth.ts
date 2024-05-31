@@ -2,9 +2,9 @@ import { Lucia } from "lucia";
 import { adapter } from "./db";
 import { cookies } from "next/headers";
 import { cache } from "react";
+import { roles } from "@/db/schema";
 
 import type { Session, User } from "lucia";
-import type { DatabaseUser } from "./db";
 
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
@@ -15,6 +15,7 @@ export const lucia = new Lucia(adapter, {
   getUserAttributes: (attributes) => {
     return {
       username: attributes.username,
+      role: attributes.role,
     };
   },
 });
@@ -32,6 +33,7 @@ export const validateRequest = cache(
     }
 
     const result = await lucia.validateSession(sessionId);
+
     // next.js throws when you attempt to set cookie when rendering page
     try {
       if (result.session && result.session.fresh) {
@@ -39,7 +41,7 @@ export const validateRequest = cache(
         cookies().set(
           sessionCookie.name,
           sessionCookie.value,
-          sessionCookie.attributes
+          sessionCookie.attributes,
         );
       }
       if (!result.session) {
@@ -47,12 +49,12 @@ export const validateRequest = cache(
         cookies().set(
           sessionCookie.name,
           sessionCookie.value,
-          sessionCookie.attributes
+          sessionCookie.attributes,
         );
       }
     } catch {}
     return result;
-  }
+  },
 );
 
 declare module "lucia" {
@@ -64,4 +66,5 @@ declare module "lucia" {
 
 interface DatabaseUserAttributes {
   username: string;
+  role: (typeof roles.enumValues)[number];
 }

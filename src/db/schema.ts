@@ -1,9 +1,12 @@
-import { timestamp, text, json, pgTable } from "drizzle-orm/pg-core";
+import { timestamp, text, json, pgEnum, pgTable } from "drizzle-orm/pg-core";
+
+export const roles = pgEnum("role", ["user", "guest"]);
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   username: text("username").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
+  role: roles("role").notNull().default("guest"),
 });
 
 export const session = pgTable("session", {
