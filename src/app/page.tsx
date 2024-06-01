@@ -2,7 +2,7 @@ import { verify } from "@node-rs/argon2";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { lucia } from "@/lib/auth";
+import { lucia, validateRequest } from "@/lib/auth";
 import NavHeader from "@/components/nav";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -10,9 +10,15 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
 export default async function Page() {
+  const { user } = await validateRequest();
+
+  if (user) {
+    return redirect("/home");
+  }
+
   return (
     <>
-      <NavHeader />
+      <NavHeader landing />
       <div className="mt-32 flex h-fit max-w-md flex-col items-center justify-center">
         <h1 className="text-rem mb-5 text-4xl">Sign in to Ginto</h1>
         <form action={login}>

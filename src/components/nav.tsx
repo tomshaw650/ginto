@@ -23,10 +23,10 @@ export default function NavHeader(props: NavHeaderProps) {
                 {link.name}
               </Link>
             ))}
-            <ThemeToggle />
-            <SignoutButton />
           </>
         ) : null}
+        <ThemeToggle />
+        {!props.landing && <SignoutButton />}
       </nav>
     </header>
   );
