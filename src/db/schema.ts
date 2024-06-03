@@ -1,4 +1,11 @@
-import { timestamp, text, json, pgEnum, pgTable } from "drizzle-orm/pg-core";
+import {
+  timestamp,
+  text,
+  jsonb,
+  serial,
+  pgEnum,
+  pgTable,
+} from "drizzle-orm/pg-core";
 
 export const roles = pgEnum("role", ["user", "guest"]);
 
@@ -21,8 +28,9 @@ export const session = pgTable("session", {
 });
 
 export const meal = pgTable("meal", {
+  id: text("id").primaryKey(),
   name: text("name").notNull(),
-  ingredients: json("ingredients"),
+  ingredients: jsonb("ingredients"),
   createdAt: timestamp("created_at", {
     withTimezone: true,
     mode: "date",
@@ -30,5 +38,6 @@ export const meal = pgTable("meal", {
 });
 
 export const pantry = pgTable("pantry", {
-  ingredients: json("ingredients"),
+  id: text("id").primaryKey(),
+  item: jsonb("item"),
 });
