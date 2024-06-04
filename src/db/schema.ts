@@ -39,5 +39,9 @@ export const meal = pgTable("meal", {
 
 export const pantry = pgTable("pantry", {
   id: text("id").primaryKey(),
-  item: jsonb("item"),
+  item: jsonb("item").$type<{
+    name: string;
+    quantity: number | null;
+    unit: string | null;
+  }>(),
 });

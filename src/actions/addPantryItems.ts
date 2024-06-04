@@ -4,9 +4,18 @@ import { db } from "@/lib/db";
 import { pantry } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 
-export default async function addPantryItems(
-  items: { item: PantryRow["item"] }[],
-) {
+interface Item {
+  name: string;
+  quantity: number | null;
+  unit: string | null;
+}
+
+interface PantryItem {
+  id: string;
+  item: Item;
+}
+
+export default async function addPantryItems(items: PantryItem[]) {
   const { user } = await validateRequest();
 
   if (user?.role !== "user") {
@@ -16,19 +25,10 @@ export default async function addPantryItems(
   }
 
   try {
-    const formattedItems = items.map((item) => ({
-      id: item.item.id,
-      item: {
-        name: item.item.name,
-        quantity: item.item.quantity !== null ? item.item.quantity : 0,
-        unit: item.item.unit || "",
-      },
-    }));
-
     await db.insert(pantry).values(
-      formattedItems.map((item) => ({
+      items.map((item) => ({
         id: item.id,
-        item: JSON.stringify(item.item),
+        item: item.item, // No need for JSON stringification
       })),
     );
 
@@ -42,13 +42,4 @@ export default async function addPantryItems(
       message: "error",
     };
   }
-}
-
-interface PantryRow {
-  item: {
-    id: string;
-    name: string;
-    quantity: number | null;
-    unit: string | null;
-  };
 }

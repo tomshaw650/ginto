@@ -9,8 +9,8 @@ import SubmitButton from "@/components/submit-button";
 import { Button } from "../ui/button";
 
 interface Item {
+  id: string;
   item: {
-    id: string;
     name: string;
     quantity: number | null;
     unit: string | null;
@@ -18,10 +18,10 @@ interface Item {
 }
 
 const initialState: Item[] = [
-  { item: { id: nanoid(), name: "", quantity: null, unit: null } },
+  { id: nanoid(), item: { name: "", quantity: null, unit: null } },
 ];
 
-export default function AddPantryItem() {
+export default function AddPantryItemsForm() {
   const [items, setItems] = useState<Item[]>(initialState);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const formRef = useRef<HTMLFormElement>(null!);
@@ -35,7 +35,7 @@ export default function AddPantryItem() {
   const handleAddItem = () => {
     setItems([
       ...items,
-      { item: { id: nanoid(), name: "", quantity: null, unit: null } },
+      { id: nanoid(), item: { name: "", quantity: null, unit: null } },
     ]);
   };
 
@@ -61,7 +61,7 @@ export default function AddPantryItem() {
     value: string | number | null,
   ) => {
     const updatedItems = items.map((item) =>
-      item.item.id === id
+      item.id === id
         ? {
             ...item,
             item: {
@@ -80,7 +80,7 @@ export default function AddPantryItem() {
     message: "",
   });
 
-  // rest form if state.message is "success", ONLY RUN ONCE
+  // reset form if state.message is "success", ONLY RUN ONCE
   useEffect(() => {
     // refresh page
     if (state.message === "success") {
@@ -90,7 +90,7 @@ export default function AddPantryItem() {
 
   return (
     <>
-      <div className="mb-4 flex gap-x-4">
+      <div className="mb-4 flex max-h-10 gap-x-4">
         <Button variant="outline" onClick={handleAddItem}>
           <Plus className="h-4 w-10" />
         </Button>
@@ -107,7 +107,7 @@ export default function AddPantryItem() {
       >
         {items.map((i, index) => (
           <ItemInput
-            key={i.item.id}
+            key={i.id}
             item={i}
             onInputChange={handleInputChange}
             inputRef={(el) => (inputRefs.current[index] = el)}
@@ -137,7 +137,7 @@ const ItemInput = ({
           required
           ref={inputRef}
           onKeyDown={onKeyDown}
-          onChange={(e) => onInputChange(item.item.id, "name", e.target.value)}
+          onChange={(e) => onInputChange(item.id, "name", e.target.value)}
         />
       </div>
       <div className="mr-2 grid w-full max-w-24 items-center gap-1.5">
@@ -148,7 +148,7 @@ const ItemInput = ({
           onKeyDown={onKeyDown}
           onChange={(e) =>
             onInputChange(
-              item.item.id,
+              item.id,
               "quantity",
               e.target.value ? parseInt(e.target.value, 10) : null,
             )
@@ -161,7 +161,7 @@ const ItemInput = ({
           value={item.item.unit ?? ""}
           onKeyDown={onKeyDown}
           onChange={(e) =>
-            onInputChange(item.item.id, "unit", e.target.value || null)
+            onInputChange(item.id, "unit", e.target.value || null)
           }
         />
       </div>
