@@ -19,12 +19,15 @@ export default function PantryPage({ items }: { items: any[] }) {
   });
 
   return (
-    <div {...handlers} className="flex flex-col items-center justify-center">
+    <div
+      {...handlers}
+      className="flex h-screen w-screen flex-col items-center justify-start"
+    >
       {showPantryList && (
         <Button
           onClick={handleToggle}
           variant="ghost"
-          className="absolute left-96 top-1/3 -translate-y-1/2 transform"
+          className="absolute left-0 top-1/3 hidden -translate-y-1/2 transform sm:block"
         >
           <CircleChevronLeft />
         </Button>
@@ -33,7 +36,7 @@ export default function PantryPage({ items }: { items: any[] }) {
         <Button
           onClick={handleToggle}
           variant="ghost"
-          className="absolute right-96 top-1/3 -translate-y-1/2 transform"
+          className="absolute right-0 top-1/3 hidden -translate-y-1/2 transform sm:block"
         >
           <CircleChevronRight />
         </Button>
