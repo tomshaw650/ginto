@@ -7,7 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { MoreHorizontal, Trash } from "lucide-react";
-import { deleteItem } from "@/lib/queries";
+import { deleteMeal } from "@/lib/queries";
 import {
   Table,
   TableBody,
@@ -25,13 +25,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export interface PantryRow {
+export interface MealRow {
   id: string;
-  item: {
+  name: string;
+  ingredients: Array<{
     name: string;
     quantity: number | null;
     unit: string | null;
-  } | null;
+  }> | null;
+  createdAt: Date | null;
 }
 
 interface DataTableProps<TData, TValue> {
@@ -39,16 +41,21 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export const columns: ColumnDef<PantryRow>[] = [
+export const columns: ColumnDef<MealRow>[] = [
   {
     accessorKey: "name",
     header: "Name",
-    accessorFn: (row) => row.item?.name,
+    accessorFn: (row) => row.name,
   },
   {
-    accessorKey: "amount",
-    header: "Amount",
-    accessorFn: (row) => row.item?.quantity + " " + (row.item?.unit || ""),
+    accessorKey: "ingredients",
+    header: "Ingredients",
+    // if the ingredient is the last one, it shouldnt have a comma or space
+    accessorFn: (row) =>
+      row.ingredients
+        ?.map((ingredient) => ingredient.name)
+        .join(", ")
+        .trim(),
   },
   {
     id: "actions",
@@ -66,7 +73,7 @@ export const columns: ColumnDef<PantryRow>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
               className="cursor-pointer"
-              onClick={() => deleteItem(item.id)}
+              onClick={() => deleteMeal(item.id)}
             >
               <Trash className="mr-2 h-4 w-4" />
               Delete
@@ -78,7 +85,7 @@ export const columns: ColumnDef<PantryRow>[] = [
   },
 ];
 
-export function PantryList<TData, TValue>({
+export function MealList<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {

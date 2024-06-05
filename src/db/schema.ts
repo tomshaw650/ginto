@@ -30,7 +30,11 @@ export const session = pgTable("session", {
 export const meal = pgTable("meal", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
-  ingredients: jsonb("ingredients"),
+  ingredients: jsonb("ingredients")
+    .array()
+    .$type<
+      Array<{ name: string; quantity: number | null; unit: string | null }>
+    >(),
   createdAt: timestamp("created_at", {
     withTimezone: true,
     mode: "date",

@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { validateRequest } from "@/lib/auth";
-import NavHeader from "@/components/nav";
 
 export default async function Page() {
   const { user } = await validateRequest();
@@ -12,7 +11,6 @@ export default async function Page() {
 
   return (
     <>
-      <NavHeader />
       <h1>Hi, {user.username}!</h1>
     </>
   );
