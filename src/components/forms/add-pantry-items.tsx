@@ -129,7 +129,7 @@ const ItemInput = ({
   onKeyDown,
 }: ItemInputProps) => {
   return (
-    <div className="flex">
+    <div className="flex px-2">
       <div className="mr-4 grid w-full items-center gap-1.5">
         <Input
           placeholder="Item name"
