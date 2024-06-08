@@ -1,8 +1,9 @@
+import { sql } from "drizzle-orm";
 import {
   timestamp,
   text,
   jsonb,
-  serial,
+  uuid,
   pgEnum,
   pgTable,
 } from "drizzle-orm/pg-core";
@@ -28,7 +29,9 @@ export const session = pgTable("session", {
 });
 
 export const meal = pgTable("meal", {
-  id: text("id").primaryKey(),
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   ingredients: jsonb("ingredients")
     .array()
@@ -42,7 +45,9 @@ export const meal = pgTable("meal", {
 });
 
 export const pantry = pgTable("pantry", {
-  id: text("id").primaryKey(),
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   item: jsonb("item").$type<{
     name: string;
     quantity: number | null;

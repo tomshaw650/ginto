@@ -48,7 +48,18 @@ export const columns: ColumnDef<PantryRow>[] = [
   {
     accessorKey: "amount",
     header: "Amount",
-    accessorFn: (row) => row.item?.quantity + " " + (row.item?.unit || ""),
+    // if the quantity is null, show nothing
+    accessorFn: (row) => {
+      const quantity = row.item?.quantity;
+      const unit = row.item?.unit;
+
+      // Check if quantity is null or undefined, and unit is null or empty string
+      if (quantity == null && (!unit || unit === "")) {
+        return "";
+      }
+
+      return (quantity ?? "") + " " + (unit || "");
+    },
   },
   {
     id: "actions",

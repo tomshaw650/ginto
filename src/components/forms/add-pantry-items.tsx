@@ -1,180 +1,110 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
-import { useFormState } from "react-dom";
-import { nanoid } from "nanoid";
 import { Plus, Minus } from "lucide-react";
+import { z } from "zod";
+import { useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import addPantryItems from "@/actions/addPantryItems";
+import { pantryItemSchema } from "@/schemas/pantry-item";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import SubmitButton from "@/components/submit-button";
-
-export const dynamic = "force-dynamic";
-
-interface Item {
-  id: string;
-  item: {
-    name: string;
-    quantity: number | null;
-    unit: string | null;
-  };
-}
-
-const createNewItem = (): Item => ({
-  id: nanoid(),
-  item: { name: "", quantity: null, unit: null },
-});
-
-const initialState: Item[] = [createNewItem()];
 
 export default function AddPantryItemsForm() {
-  const [items, setItems] = useState<Item[]>(initialState);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  useEffect(() => {
-    if (inputRefs.current.length > 0 && items.length > 1) {
-      inputRefs.current[inputRefs.current.length - 1]?.focus();
-    }
-  }, [items.length]);
-
-  const handleAddItem = () => {
-    setItems([
-      ...items,
-      { id: nanoid(), item: { name: "", quantity: null, unit: null } },
-    ]);
-  };
-
-  const handleRemoveItem = () => {
-    if (items.length > 1) {
-      setItems(items.slice(0, -1));
-    }
-  };
-
-  const handleKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>,
-    index: number,
-  ) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      handleAddItem();
-    }
-  };
-
-  const handleInputChange = (
-    id: string,
-    field: "name" | "quantity" | "unit",
-    value: string | number | null,
-  ) => {
-    const updatedItems = items.map((item) =>
-      item.id === id
-        ? {
-            ...item,
-            item: {
-              ...item.item,
-              [field]: value,
-            },
-          }
-        : item,
-    );
-    setItems(updatedItems);
-  };
-
-  const updatePantryWithItems = addPantryItems.bind(null, items);
-
-  const [state, formAction] = useFormState(updatePantryWithItems, {
-    message: "",
+  const { register, control, handleSubmit, reset } = useForm<
+    z.infer<typeof pantryItemSchema>
+  >({
+    resolver: zodResolver(pantryItemSchema),
+    defaultValues: {
+      items: [
+        {
+          name: "",
+          quantity: null,
+          unit: null,
+        },
+      ],
+    },
   });
 
-  useEffect(() => {
-    if (state.message === "success") {
-      window.location.reload();
-    }
-  }, [state.message, items]);
+  const { fields, append, remove } = useFieldArray({
+    name: "items",
+    control,
+  });
+
+  function onSubmit(values: z.infer<typeof pantryItemSchema>) {
+    fetch("/api/add-pantry-items", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        toast.success("Items added to pantry", {
+          duration: 3000,
+        });
+        reset();
+      })
+      .catch((err) => {
+        toast.error("Error adding items to pantry, " + err, {
+          duration: 3000,
+        });
+      });
+  }
 
   return (
     <>
       <div className="mb-4 flex max-h-10 gap-x-4">
-        <Button variant="outline" onClick={handleAddItem}>
+        <Button
+          variant="outline"
+          onClick={() => append({ name: "", quantity: null, unit: null })}
+        >
           <Plus className="h-4 w-10" />
         </Button>
-        {items.length > 1 && (
-          <Button variant="outline" onClick={handleRemoveItem}>
-            <Minus className="h-4 w-10" />
-          </Button>
+        {fields.length > 1 && (
+          <>
+            <Button variant="outline" onClick={() => remove(fields.length - 1)}>
+              <Minus className="h-4 w-10" />
+            </Button>
+            <Button variant="outline" onClick={() => reset()}>
+              Clear
+            </Button>
+          </>
         )}
       </div>
-      <form action={formAction} className="flex flex-col items-center gap-y-4">
-        {items.map((i, index) => (
-          <ItemInput
-            key={i.id}
-            item={i}
-            onInputChange={handleInputChange}
-            inputRef={(el) => (inputRefs.current[index] = el)}
-            onKeyDown={(e) => handleKeyDown(e, index)}
-          />
+      <form
+        onSubmit={handleSubmit((data) => onSubmit(data))}
+        className="flex flex-col items-center space-y-2"
+      >
+        {fields.map((field, index) => (
+          <div key={field.id} className="flex px-2">
+            <div className="mr-3 grid w-full items-center gap-1.5">
+              <Input
+                {...register(`items.${index}.name`)}
+                placeholder="Item name"
+                required
+              />
+            </div>
+            <div className="mr-2 grid w-full max-w-24 items-center gap-1.5">
+              <Input
+                {...register(`items.${index}.quantity`)}
+                placeholder="Quantity"
+                type="number"
+              />
+            </div>
+            <div className="mr-2 grid w-full max-w-24 items-center gap-1.5">
+              <Input
+                {...register(`items.${index}.unit`)}
+                placeholder="Unit"
+                type="text"
+              />
+            </div>
+          </div>
         ))}
-        <SubmitButton className="uppercase" pendingcontent="Adding...">
+        <Button className="uppercase" type="submit">
           Add to pantry
-        </SubmitButton>
+        </Button>
       </form>
     </>
   );
-}
-
-const ItemInput = ({
-  item,
-  onInputChange,
-  inputRef,
-  onKeyDown,
-}: ItemInputProps) => {
-  return (
-    <div className="flex px-2">
-      <div className="mr-3 grid w-full items-center gap-1.5">
-        <Input
-          placeholder="Item name"
-          value={item.item.name}
-          required
-          ref={inputRef}
-          onKeyDown={onKeyDown}
-          onChange={(e) => onInputChange(item.id, "name", e.target.value)}
-        />
-      </div>
-      <div className="mr-2 grid w-full max-w-24 items-center gap-1.5">
-        <Input
-          placeholder="Quantity"
-          type="number"
-          value={item.item.quantity ?? ""}
-          onKeyDown={onKeyDown}
-          onChange={(e) =>
-            onInputChange(
-              item.id,
-              "quantity",
-              e.target.value ? parseInt(e.target.value, 10) : null,
-            )
-          }
-        />
-      </div>
-      <div className="mr-2 grid w-full max-w-24 items-center gap-1.5">
-        <Input
-          placeholder="Unit"
-          value={item.item.unit ?? ""}
-          onKeyDown={onKeyDown}
-          onChange={(e) =>
-            onInputChange(item.id, "unit", e.target.value || null)
-          }
-        />
-      </div>
-    </div>
-  );
-};
-
-interface ItemInputProps {
-  item: Item;
-  onInputChange: (
-    id: string,
-    field: "name" | "quantity" | "unit",
-    value: string | number | null,
-  ) => void;
-  inputRef: (el: HTMLInputElement | null) => void;
-  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
