@@ -1,4 +1,5 @@
 "use server";
+import { toast } from "sonner";
 import { validateRequest } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { pantry } from "@/db/schema";
@@ -20,7 +21,7 @@ export default async function addPantryItems(items: PantryItem[]) {
 
   if (user?.role !== "user") {
     return {
-      error: "You cannot complete this action as a guest.",
+      message: "guest",
     };
   }
 

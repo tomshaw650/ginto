@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
@@ -27,6 +28,7 @@ export default function RootLayout({
           <main className="flex h-screen flex-col items-center">
             {children}
           </main>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

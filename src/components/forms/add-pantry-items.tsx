@@ -3,10 +3,13 @@ import { useState, useRef, useEffect } from "react";
 import { useFormState } from "react-dom";
 import { nanoid } from "nanoid";
 import { Plus, Minus } from "lucide-react";
+import { toast } from "sonner";
 import addPantryItems from "@/actions/addPantryItems";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import SubmitButton from "@/components/submit-button";
-import { Button } from "../ui/button";
+
+export const dynamic = "force-dynamic";
 
 interface Item {
   id: string;
@@ -17,17 +20,19 @@ interface Item {
   };
 }
 
-const initialState: Item[] = [
-  { id: nanoid(), item: { name: "", quantity: null, unit: null } },
-];
+const createNewItem = (): Item => ({
+  id: nanoid(),
+  item: { name: "", quantity: null, unit: null },
+});
+
+const initialState: Item[] = [createNewItem()];
 
 export default function AddPantryItemsForm() {
   const [items, setItems] = useState<Item[]>(initialState);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const formRef = useRef<HTMLFormElement>(null!);
 
   useEffect(() => {
-    if (inputRefs.current.length > 0) {
+    if (inputRefs.current.length > 0 && items.length > 1) {
       inputRefs.current[inputRefs.current.length - 1]?.focus();
     }
   }, [items.length]);
@@ -80,13 +85,11 @@ export default function AddPantryItemsForm() {
     message: "",
   });
 
-  // reset form if state.message is "success", ONLY RUN ONCE
   useEffect(() => {
-    // refresh page
     if (state.message === "success") {
       window.location.reload();
     }
-  }, [items, []]);
+  }, [state.message, items]);
 
   return (
     <>
@@ -100,11 +103,7 @@ export default function AddPantryItemsForm() {
           </Button>
         )}
       </div>
-      <form
-        ref={formRef}
-        action={formAction}
-        className="flex flex-col items-center gap-y-4"
-      >
+      <form action={formAction} className="flex flex-col items-center gap-y-4">
         {items.map((i, index) => (
           <ItemInput
             key={i.id}
@@ -130,7 +129,7 @@ const ItemInput = ({
 }: ItemInputProps) => {
   return (
     <div className="flex px-2">
-      <div className="mr-4 grid w-full items-center gap-1.5">
+      <div className="mr-3 grid w-full items-center gap-1.5">
         <Input
           placeholder="Item name"
           value={item.item.name}
