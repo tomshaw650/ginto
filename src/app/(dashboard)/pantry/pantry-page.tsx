@@ -1,12 +1,20 @@
 "use client";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useSwipeable } from "react-swipeable";
 import { CircleChevronRight, CircleChevronLeft } from "lucide-react";
+import { getPantryItems } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import AddPantryItemsForm from "@/components/forms/add-pantry-items";
 import { PantryList, columns } from "@/components/pantry-list";
 
-export default function PantryPage({ items }: { items: any[] }) {
+export default function PantryPage() {
+  const { data } = useQuery({
+    queryKey: ["pantryItems"],
+    queryFn: () => {
+      return getPantryItems();
+    },
+  });
   const [showPantryList, setShowPantryList] = useState(false);
 
   const handleToggle = () => {
@@ -17,6 +25,8 @@ export default function PantryPage({ items }: { items: any[] }) {
     onSwipedLeft: () => setShowPantryList(true),
     onSwipedRight: () => setShowPantryList(false),
   });
+
+  const pantryData = data || [];
 
   return (
     <div
@@ -42,7 +52,7 @@ export default function PantryPage({ items }: { items: any[] }) {
         </Button>
       )}
       {showPantryList ? (
-        <PantryList data={items} columns={columns} />
+        <PantryList data={pantryData} columns={columns} />
       ) : (
         <AddPantryItemsForm />
       )}
