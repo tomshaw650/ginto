@@ -28,6 +28,22 @@ export const session = pgTable("session", {
   }).notNull(),
 });
 
+export const week = pgTable("week", {
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  day: text("name").notNull(),
+  meal: jsonb("meal").$type<{
+    id: string;
+    name: string;
+    ingredients: Array<{
+      name: string;
+      quantity: number | null;
+      unit: string | null;
+    }>;
+  }>(),
+});
+
 export const meal = pgTable("meal", {
   id: uuid("id")
     .primaryKey()

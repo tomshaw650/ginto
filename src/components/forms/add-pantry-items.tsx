@@ -128,7 +128,7 @@ export default function AddPantryItemsForm() {
                 autoComplete="off"
               />
             </div>
-            <div className="mb-4 mr-2 grid w-full max-w-24 items-center gap-1.5">
+            <div className="mr-2 grid w-full max-w-24 items-center gap-1.5">
               <Input
                 {...register(`items.${index}.unit`)}
                 placeholder="Unit"
@@ -139,10 +139,11 @@ export default function AddPantryItemsForm() {
             </div>
           </div>
         ))}
+        <div className="px-2"></div>
         <Button className="uppercase" type="submit">
           Add to pantry
         </Button>
-        <div className="mt-5"></div>
+        <div className="mt-2"></div>
       </form>
     </>
   );

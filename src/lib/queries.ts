@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/lib/db";
-import { pantry, meal } from "@/db/schema";
+import { pantry, meal, week } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -24,4 +24,20 @@ export const getMeals = async () => {
 export const deleteMeal = async (id: string) => {
   await db.delete(meal).where(eq(meal.id, id));
   revalidatePath("/meal");
+};
+
+// ** WEEK ** //
+export const getWeek = async () => {
+  const allWeek = await db.select().from(week);
+  return allWeek;
+};
+
+export const addMeal = async (meal: any, day: string) => {
+  await db.update(week).set({ meal: meal }).where(eq(week.day, day));
+  revalidatePath("/");
+};
+
+export const clearDay = async (day: string) => {
+  await db.update(week).set({ meal: null }).where(eq(week.day, day));
+  revalidatePath("/");
 };
