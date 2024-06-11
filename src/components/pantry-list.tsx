@@ -54,7 +54,6 @@ export const columns: ColumnDef<PantryRow>[] = [
       const quantity = row.item?.quantity;
       const unit = row.item?.unit;
 
-      // Check if quantity is null or undefined, and unit is null or empty string
       if (quantity == null && (!unit || unit === "")) {
         return "";
       }
@@ -96,7 +95,7 @@ export function PantryList<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: 7,
   });
 
   const table = useReactTable({

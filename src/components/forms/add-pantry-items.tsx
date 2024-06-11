@@ -85,7 +85,7 @@ export default function AddPantryItemsForm() {
 
   return (
     <>
-      <div className="mb-4 flex max-h-10 gap-x-4">
+      <div className="my-4 flex max-h-10 gap-x-4">
         <Button
           variant="outline"
           onClick={() => append({ name: "", quantity: null, unit: null })}
@@ -97,12 +97,11 @@ export default function AddPantryItemsForm() {
             <Minus className="h-4 w-10" />
           </Button>
         )}
-        {fields.length > 1 ||
-          (nameWatched?.length > 0 && (
-            <Button variant="outline" onClick={() => reset()}>
-              Clear
-            </Button>
-          ))}
+        {(fields.length > 1 || nameWatched?.length > 0) && (
+          <Button variant="outline" onClick={() => reset()}>
+            Clear
+          </Button>
+        )}
       </div>
       <form
         onSubmit={handleSubmit((data) => onSubmit(data))}
@@ -129,7 +128,7 @@ export default function AddPantryItemsForm() {
                 autoComplete="off"
               />
             </div>
-            <div className="mr-2 grid w-full max-w-24 items-center gap-1.5">
+            <div className="mb-4 mr-2 grid w-full max-w-24 items-center gap-1.5">
               <Input
                 {...register(`items.${index}.unit`)}
                 placeholder="Unit"
@@ -143,6 +142,7 @@ export default function AddPantryItemsForm() {
         <Button className="uppercase" type="submit">
           Add to pantry
         </Button>
+        <div className="mt-5"></div>
       </form>
     </>
   );

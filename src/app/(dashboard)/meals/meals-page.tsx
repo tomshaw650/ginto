@@ -1,19 +1,20 @@
 "use client";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useSwipeable } from "react-swipeable";
 import { CircleChevronRight, CircleChevronLeft } from "lucide-react";
-import { Item } from "@/types/item";
+import { getMeals } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import AddMealForm from "@/components/forms/add-meal";
 import { MealList, columns } from "@/components/meal-list";
 
-export default function MealsPage({
-  allMeals,
-  allPantryItems,
-}: {
-  allMeals: any[];
-  allPantryItems: any;
-}) {
+export default function MealPage() {
+  const { data } = useQuery({
+    queryKey: ["meals"],
+    queryFn: () => {
+      return getMeals();
+    },
+  });
   const [showMealList, setShowMealList] = useState(false);
 
   const handleToggle = () => {
@@ -24,6 +25,8 @@ export default function MealsPage({
     onSwipedLeft: () => setShowMealList(true),
     onSwipedRight: () => setShowMealList(false),
   });
+
+  const mealData = data || [];
 
   return (
     <div
@@ -49,9 +52,9 @@ export default function MealsPage({
         </Button>
       )}
       {showMealList ? (
-        <MealList data={allMeals} columns={columns} />
+        <MealList data={mealData} columns={columns} />
       ) : (
-        <AddMealForm allPantryItems={allPantryItems} />
+        <AddMealForm />
       )}
     </div>
   );

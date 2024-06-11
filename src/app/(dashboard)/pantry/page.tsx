@@ -8,8 +8,6 @@ import { getPantryItems } from "@/lib/queries";
 import { validateRequest } from "@/lib/auth";
 import PantryPage from "./pantry-page";
 
-export const dynamic = "force-dynamic";
-
 export default async function Page() {
   const queryClient = new QueryClient();
   const { user } = await validateRequest();

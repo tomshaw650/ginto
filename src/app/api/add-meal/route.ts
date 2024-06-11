@@ -1,28 +1,26 @@
 import { validateRequest } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { pantry } from "@/db/schema";
+import { meal as meals } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 
 export async function POST(request: Request) {
   const { user } = await validateRequest();
-  const { items } = await request.json();
+  const items = await request.json();
 
   if (user?.role !== "user") {
     return Response.json({ status: 401, message: "Unauthorized" });
   }
 
   try {
-    for (const item of items) {
-      await db.insert(pantry).values({ item });
-    }
+    await db.insert(meals).values(items);
 
-    revalidatePath("/pantry");
+    revalidatePath("/meals");
 
-    return Response.json({ status: 200, message: "Items added to pantry" });
+    return Response.json({ status: 200, message: "Meal created succesfully" });
   } catch (err) {
     return Response.json({
       status: 500,
-      message: "Error adding items to pantry",
+      message: "Error creating meal",
     });
   }
 }

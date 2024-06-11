@@ -1,20 +1,30 @@
 import { redirect } from "next/navigation";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import { getMeals } from "@/lib/queries";
 import { validateRequest } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { meal, pantry } from "@/db/schema";
-import type { MealRow } from "@/components/meal-list";
-import MealsPage from "./meals-page";
+import MealPage from "./meals-page";
 
 export default async function Page() {
+  const queryClient = new QueryClient();
   const { user } = await validateRequest();
 
-  const allPantryItems = await db.select().from(pantry);
-  const allMeals: MealRow[] = await db.select().from(meal);
+  await queryClient.prefetchQuery({
+    queryKey: ["meals"],
+    queryFn: getMeals,
+  });
 
   // if not a user or a guest
   if (!user?.role) {
     return redirect("/");
   }
 
-  return <MealsPage allPantryItems={allPantryItems} allMeals={allMeals} />;
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <MealPage />
+    </HydrationBoundary>
+  );
 }

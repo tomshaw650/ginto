@@ -8,31 +8,38 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { useQuery } from "@tanstack/react-query";
+import { getPantryItems } from "@/lib/queries";
 
 export default function PantryItemList({
-  items,
   setOpen,
   setSelectedItem,
 }: {
-  items: any;
   setOpen: (open: boolean) => void;
   setSelectedItem: (item: Item | null) => void;
 }) {
+  const { data } = useQuery({
+    queryKey: ["pantryItems"],
+    queryFn: () => {
+      return getPantryItems();
+    },
+  });
+
+  const items = data || [];
+
   return (
     <Command>
       <CommandInput placeholder="Filter ingredients..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>
-          {items.allPantryItems.allPantryItems.map((item: any) => (
+          {items.map((item: any) => (
             <CommandItem
               key={item.id}
               value={item.id}
               onSelect={(value) => {
                 setSelectedItem(
-                  items.allPantryItems.allPantryItems.find(
-                    (item: any) => item.id === value,
-                  ) || null,
+                  items.find((item: any) => item.id === value) || null,
                 );
                 setOpen(false);
               }}
