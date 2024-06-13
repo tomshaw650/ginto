@@ -32,7 +32,7 @@ export const week = pgTable("week", {
   id: uuid("id")
     .primaryKey()
     .default(sql`gen_random_uuid()`),
-  day: text("name").notNull(),
+  day: text("day").notNull(),
   meal: jsonb("meal").$type<{
     id: string;
     name: string;

@@ -40,7 +40,7 @@ export default function AddMealForm() {
 
   const addMeal = useMutation({
     mutationFn: async (values: z.infer<typeof mealSchema>) => {
-      const response = await fetch("/api/add-meal", {
+      const response = await fetch("/api/create-meal", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

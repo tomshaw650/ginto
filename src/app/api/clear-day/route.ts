@@ -17,18 +17,15 @@ export async function POST(request: Request) {
   }
 
   try {
-    await db
-      .update(week)
-      .set({ meal: items.meal })
-      .where(eq(week.day, items.day));
+    await db.update(week).set({ meal: null }).where(eq(week.day, items.day));
 
     revalidatePath("/home");
 
-    return Response.json({ status: 200, message: "Meal created succesfully" });
+    return Response.json({ status: 200, message: "Day cleared" });
   } catch (err) {
     return Response.json({
       status: 500,
-      message: "Error creating meal",
+      message: "Error clearing day",
     });
   }
 }

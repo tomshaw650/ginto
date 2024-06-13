@@ -17,18 +17,22 @@ export async function POST(request: Request) {
   }
 
   try {
-    await db
-      .update(week)
-      .set({ meal: items.meal })
-      .where(eq(week.day, items.day));
+    const day1 = items.day1 as string;
+    const day2 = items.day2 as string;
+    const meal1 = items.meal1 as any;
+    const meal2 = items.meal2 as any;
+
+    await db.update(week).set({ meal: meal2 }).where(eq(week.day, day1));
+    await db.update(week).set({ meal: meal1 }).where(eq(week.day, day2));
 
     revalidatePath("/home");
 
-    return Response.json({ status: 200, message: "Meal created succesfully" });
+    return NextResponse.json({ status: 200, message: "Meals swapped" });
   } catch (err) {
-    return Response.json({
+    console.error("Error swapping meals: ", err);
+    return NextResponse.json({
       status: 500,
-      message: "Error creating meal",
+      message: "Error swapping meals",
     });
   }
 }

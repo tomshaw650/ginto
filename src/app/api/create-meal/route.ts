@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
 import { validateRequest } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { week } from "@/db/schema";
+import { meal as meals } from "@/db/schema";
 
 export async function POST(request: Request) {
   const { user } = await validateRequest();
@@ -17,18 +16,15 @@ export async function POST(request: Request) {
   }
 
   try {
-    await db
-      .update(week)
-      .set({ meal: items.meal })
-      .where(eq(week.day, items.day));
+    await db.insert(meals).values(items);
 
-    revalidatePath("/home");
+    revalidatePath("/meals");
 
     return Response.json({ status: 200, message: "Meal created succesfully" });
   } catch (err) {
     return Response.json({
       status: 500,
-      message: "Error creating meal",
+      message: "500 being hit",
     });
   }
 }
