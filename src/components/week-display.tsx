@@ -7,6 +7,7 @@ import {
   DndContext,
   useDraggable,
   useDroppable,
+  DragStartEvent,
   DragEndEvent,
   DragOverEvent,
   UniqueIdentifier,
@@ -55,9 +56,10 @@ interface DraggableMealProps {
 }
 
 const DraggableMeal: React.FC<DraggableMealProps> = ({ meal, dayId }) => {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: dayId,
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: dayId,
+    });
 
   const style = transform
     ? {
@@ -71,7 +73,7 @@ const DraggableMeal: React.FC<DraggableMealProps> = ({ meal, dayId }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="flex items-center justify-between gap-x-2"
+      className={`flex items-center justify-between gap-x-2 ${isDragging ? "opacity-50" : ""}`}
     >
       <span>{meal.name}</span>
     </div>
@@ -124,6 +126,7 @@ export default function WeekDisplay() {
     queryFn: () => getWeek(),
   });
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
+  const [draggingId, setDraggingId] = useState<UniqueIdentifier | null>(null);
 
   const addMeal = useMutation({
     mutationFn: async (values: { meal: Meal; day: Day }) => {
@@ -236,6 +239,10 @@ export default function WeekDisplay() {
     }
   };
 
+  const handleDragStart = (event: DragStartEvent) => {
+    setDraggingId(event.active.id);
+  };
+
   const handleDragOver = (event: DragOverEvent) => {
     setOverId(event.over?.id || null);
   };
@@ -243,6 +250,7 @@ export default function WeekDisplay() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setOverId(null);
+    setDraggingId(null);
 
     if (active.id !== over?.id) {
       const activeDay = sortedWeekData.find((day) => day.id === active.id);
@@ -260,7 +268,11 @@ export default function WeekDisplay() {
   };
 
   return (
-    <DndContext onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+    <DndContext
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+    >
       <div className="my-4 flex max-h-10 flex-col gap-x-4 gap-y-1">
         {sortedWeekData.map((day) => (
           <DroppableDay
