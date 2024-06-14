@@ -73,7 +73,7 @@ const DraggableMeal: React.FC<DraggableMealProps> = ({ meal, dayId }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className={`flex items-center justify-between gap-x-2 ${isDragging ? "opacity-50" : ""}`}
+      className={`flex touch-none items-center justify-between gap-x-2 ${isDragging ? "opacity-50" : ""}`}
     >
       <span>{meal.name}</span>
     </div>
