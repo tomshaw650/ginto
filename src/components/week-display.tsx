@@ -99,7 +99,7 @@ const DroppableDay: React.FC<DroppableDayProps> = ({
 
   return (
     <Card
-      className={`w-[300px] rounded-lg ${isOver ? "bg-blue-100" : ""}`}
+      className={`w-[300px] rounded-lg ${isOver ? "bg-blue-100 dark:bg-blue-100/10" : ""}`}
       ref={setNodeRef}
     >
       <CardHeader>
