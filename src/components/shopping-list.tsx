@@ -1,46 +1,57 @@
 "use client";
-
+import { useState } from "react";
+import { useStorage, useMutation } from "@liveblocks/react/suspense";
+import "@liveblocks/react";
+import { LiveObject } from "@liveblocks/client";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "./ui/separator";
-
-const list = [
-  "200g flour",
-  "200g sugar",
-  "100g butter",
-  "100g eggs",
-  "1 tsp vanilla extract",
-  "1 tsp baking powder",
-  "1/2 tsp salt",
-  "1/2 cup milk",
-  "2 cups water",
-  "2 cups chocolate chips",
-];
-
-const done: string[] = ["chains", "whips"];
+import { Input } from "./ui/input";
 
 export default function ShoppingList() {
+  const [draft, setDraft] = useState("");
+  const list = useStorage((root) => root.items);
+
+  const addItem = useMutation(({ storage }, text) => {
+    storage.get("items").push(new LiveObject({ text }));
+  }, []);
+
+  const toggleDone = useMutation(({ storage }, index) => {
+    const item = storage.get("items").get(index);
+    item?.set("checked", !item.get("checked"));
+  }, []);
+
   return (
     <div className="flex flex-col gap-3">
-      {list.map((item) => (
-        <div key={item}>
-          <Checkbox id={item} className="mr-2" />
+      <Input
+        type="text"
+        autoFocus={true}
+        className="w-[300px] border-none"
+        placeholder="Add an item to the list..."
+        value={draft}
+        onChange={(e) => {
+          setDraft(e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (draft && e.key === "Enter") {
+            addItem(draft);
+            setDraft("");
+          }
+        }}
+      />
+      {list.map((item, index) => (
+        <div key={index}>
+          <Checkbox
+            id={item.text}
+            className="mr-2"
+            onClick={() => toggleDone(index)}
+            checked={item.checked}
+          />
           <label
-            className="cursor-pointer text-lg font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            htmlFor={item}
+            className={`cursor-pointer text-lg font-medium leading-none ${
+              item.checked && "line-through opacity-30"
+            }`}
+            htmlFor={item.text}
           >
-            {item}
-          </label>
-        </div>
-      ))}
-      {done.length > 0 && <Separator />}
-      {done.map((item) => (
-        <div key={item} className="line-through">
-          <Checkbox id={item} className="mr-2 opacity-50" checked />
-          <label
-            className="cursor-pointer text-lg font-medium leading-none opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            htmlFor={item}
-          >
-            {item}
+            {item.text}
           </label>
         </div>
       ))}
