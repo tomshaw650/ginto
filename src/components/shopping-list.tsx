@@ -1,9 +1,8 @@
 "use client";
 import { useState } from "react";
-import { useStorage, useMutation } from "@liveblocks/react/suspense";
+import { useStorage, useMutation, useSelf } from "@liveblocks/react/suspense";
 import "@liveblocks/react";
 import { LiveObject } from "@liveblocks/client";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import generateShoppingList from "@/lib/generateShoppingList";
 import addListToPantry from "@/lib/addListToPantry";
@@ -23,36 +22,76 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function ShoppingList() {
-  const queryClient = useQueryClient();
   const [draft, setDraft] = useState("");
   const list = useStorage((root) => root.items);
+  const { role } = useSelf((me) => me.info);
 
   const addItem = useMutation(({ storage }, text) => {
-    storage.get("items").push(new LiveObject({ text }));
+    try {
+      storage.get("items").push(new LiveObject({ text }));
+    } catch (err) {
+      if (role === "guest") {
+        toast.error("Guests cannot complete this action.", {
+          duration: 3000,
+        });
+      }
+    }
   }, []);
 
   const toggleDone = useMutation(({ storage }, index) => {
-    const item = storage.get("items").get(index);
-    item?.set("checked", !item.get("checked"));
+    try {
+      const item = storage.get("items").get(index);
+      item?.set("checked", !item.get("checked"));
+    } catch (err) {
+      if (role === "guest") {
+        toast.error("Guests cannot complete this action.", {
+          duration: 3000,
+        });
+      }
+    }
   }, []);
 
   const deleteAll = useMutation(({ storage }) => {
-    storage.get("items").clear();
+    try {
+      storage.get("items").clear();
+    } catch (err) {
+      if (role === "guest") {
+        toast.error("Guests cannot complete this action.", {
+          duration: 3000,
+        });
+      }
+    }
   }, []);
 
   const deleteItem = useMutation(({ storage }, index) => {
-    storage.get("items").delete(index);
+    try {
+      storage.get("items").delete(index);
+    } catch (err) {
+      if (role === "guest") {
+        toast.error("Guests cannot complete this action.", {
+          duration: 3000,
+        });
+      }
+    }
   }, []);
 
   const generateFromWeek = useMutation(({ storage }) => {
-    generateShoppingList().then((list) => {
-      for (const item of list) {
-        const itemString = `${item.name} ${item.quantity}${item.unit}`;
-        storage
-          .get("items")
-          .push(new LiveObject({ text: itemString, checked: false }));
+    try {
+      generateShoppingList().then((list) => {
+        for (const item of list) {
+          const itemString = `${item.name} ${item.quantity}${item.unit}`;
+          storage
+            .get("items")
+            .push(new LiveObject({ text: itemString, checked: false }));
+        }
+      });
+    } catch (err) {
+      if (role === "guest") {
+        toast.error("Guests cannot complete this action.", {
+          duration: 3000,
+        });
       }
-    });
+    }
   }, []);
 
   const getCheckedItems = () => {
@@ -77,23 +116,31 @@ export default function ShoppingList() {
   };
 
   const addCheckedItemsToPantry = () => {
-    const checkedItems = getCheckedItems();
+    try {
+      const checkedItems = getCheckedItems();
 
-    addListToPantry(checkedItems).then((response) => {
-      if (response === true && checkedItems.length > 0) {
-        toast.success("Pantry updated", {
-          duration: 3000,
-        });
-      } else if (response === true && checkedItems.length <= 0) {
-        toast.error("No items selected", {
-          duration: 3000,
-        });
-      } else {
-        toast.error("Error updating pantry", {
+      addListToPantry(checkedItems).then((response) => {
+        if (response === true && checkedItems.length > 0) {
+          toast.success("Pantry updated", {
+            duration: 3000,
+          });
+        } else if (response === true && checkedItems.length <= 0) {
+          toast.error("No items selected", {
+            duration: 3000,
+          });
+        } else {
+          toast.error("Error updating pantry", {
+            duration: 3000,
+          });
+        }
+      });
+    } catch (err) {
+      if (role === "guest") {
+        toast.error("Guests cannot complete this action.", {
           duration: 3000,
         });
       }
-    });
+    }
   };
 
   return (
@@ -147,6 +194,7 @@ export default function ShoppingList() {
               className="mr-2 align-bottom"
               onClick={() => toggleDone(index)}
               checked={item.checked}
+              disabled={role !== "user"}
             />
             <label
               className={`cursor-pointer align-bottom text-lg font-medium leading-none ${

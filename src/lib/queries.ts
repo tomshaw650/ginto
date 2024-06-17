@@ -1,7 +1,13 @@
 "use server";
 import { db } from "@/lib/db";
-import { pantry, ingredients, meal, week } from "@/db/schema";
+import { user as dbUser, pantry, ingredients, meal, week } from "@/db/schema";
 import { sql, eq } from "drizzle-orm";
+
+// ** USER ** //
+export const getUser = async (id: string) => {
+  const user = await db.select().from(dbUser).where(eq(dbUser.id, id));
+  return user;
+};
 
 // ** PANTRY ** //
 export const getPantryItems = async () => {

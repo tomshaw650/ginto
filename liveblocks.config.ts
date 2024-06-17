@@ -10,5 +10,14 @@ declare global {
     Storage: {
       items: LiveList<LiveObject<Item>>;
     };
+
+    UserMeta: {
+      id: string;
+
+      // Example, use any JSON-compatible data in your metadata
+      info: {
+        role: string;
+      };
+    };
   }
 }

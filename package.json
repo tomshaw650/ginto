@@ -13,6 +13,7 @@
     "@dnd-kit/sortable": "^8.0.0",
     "@hookform/resolvers": "^3.6.0",
     "@liveblocks/client": "^2.0.2",
+    "@liveblocks/node": "^2.0.2",
     "@liveblocks/react": "^2.0.2",
     "@lucia-auth/adapter-drizzle": "1.0.7",
     "@neondatabase/serverless": "^0.9.3",

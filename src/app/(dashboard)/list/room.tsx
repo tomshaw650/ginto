@@ -9,11 +9,7 @@ import { LiveList } from "@liveblocks/client";
 
 export function Room({ children }: { children: ReactNode }) {
   return (
-    <LiveblocksProvider
-      publicApiKey={
-        "pk_prod_rMDG4vxRCvq6jUZVHKO0mjM4WM6WqP8KWHAum-M1VJ2Vk2-v8TnhRU_AsS52_BRh"
-      }
-    >
+    <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
       <RoomProvider
         id="shopping-list"
         initialPresence={{}}
