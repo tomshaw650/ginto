@@ -33,6 +33,7 @@ export default function IngredientsPage() {
       {...handlers}
       className="flex h-screen w-screen flex-col items-center justify-start"
     >
+      <h2 className="mb-2 text-2xl font-bold">Ingredients</h2>
       {showIngredientsList && (
         <Button
           onClick={handleToggle}
