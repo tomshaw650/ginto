@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/lib/db";
-import { pantry, meal, week } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { pantry, ingredients, meal, week } from "@/db/schema";
+import { sql, eq } from "drizzle-orm";
 
 // ** PANTRY ** //
 export const getPantryItems = async () => {
@@ -11,6 +11,25 @@ export const getPantryItems = async () => {
 
 export const deleteItem = async (id: string) => {
   await db.delete(pantry).where(eq(pantry.id, id));
+};
+
+export const updateItemQuantity = async (id: string, newQuantity: number) => {
+  await db
+    .update(pantry)
+    .set({
+      item: sql`jsonb_set(item, '{quantity}', ${newQuantity})`,
+    })
+    .where(eq(pantry.id, id));
+};
+
+// ** INGREDIENTS ** //
+export const getIngredients = async () => {
+  const allIngredients = await db.select().from(ingredients);
+  return allIngredients;
+};
+
+export const deleteIngredient = async (id: string) => {
+  await db.delete(ingredients).where(eq(ingredients.id, id));
 };
 
 // ** MEAL ** //

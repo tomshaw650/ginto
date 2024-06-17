@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
-import type { Item } from "@/types/item";
-import PantryItemList from "./pantry-item-list";
+import type { IngredientItem } from "@/types/item";
+import IngredientsItemList from "./ingredients-item-list";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import {
@@ -11,16 +11,16 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export default function AddIngredient({
+export default function AddIngredientItem({
   onItemSelect,
 }: {
-  onItemSelect: (item: Item | null) => void;
+  onItemSelect: (item: IngredientItem | null) => void;
 }) {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [selectedItem, setSelectedItem] = useState<IngredientItem | null>(null);
 
-  const handleSelectItem = (item: Item | null) => {
+  const handleSelectItem = (item: IngredientItem | null) => {
     setSelectedItem(item);
     onItemSelect(item);
     setOpen(false);
@@ -39,7 +39,7 @@ export default function AddIngredient({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0" align="start">
-          <PantryItemList
+          <IngredientsItemList
             setOpen={setOpen}
             setSelectedItem={handleSelectItem}
           />
@@ -57,7 +57,7 @@ export default function AddIngredient({
       </DrawerTrigger>
       <DrawerContent>
         <div className="mt-4 border-t">
-          <PantryItemList
+          <IngredientsItemList
             setOpen={setOpen}
             setSelectedItem={handleSelectItem}
           />

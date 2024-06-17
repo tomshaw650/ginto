@@ -13,10 +13,22 @@ import {
   UniqueIdentifier,
 } from "@dnd-kit/core";
 import type { Meal } from "@/types/meal";
+import updatePantry from "@/lib/updatePantry";
 import { getWeek } from "@/lib/queries";
 import AddMeal from "@/components/add-meal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Day {
   id: string;
@@ -84,7 +96,7 @@ interface DroppableDayProps {
   day: Day;
   children: React.ReactNode;
   isOver: boolean;
-  handleDeleteMeal: (dayId: string) => void;
+  handleDeleteMeal: (dayId: string, meal: any) => void;
 }
 
 const DroppableDay: React.FC<DroppableDayProps> = ({
@@ -105,13 +117,44 @@ const DroppableDay: React.FC<DroppableDayProps> = ({
       <CardHeader>
         <CardTitle className="flex items-center justify-between capitalize">
           {day.day}
-          <Button
+          {/* <Button
             variant="ghost"
             onClick={() => handleDeleteMeal(day.id)}
             className={`${day.meal ? "" : "-z-50 cursor-default opacity-0"}`}
           >
             <X className="h-5 w-5" />
-          </Button>
+          </Button> */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                className={`${day.meal ? "" : "-z-50 cursor-default opacity-0"}`}
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Remove Meal</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Do you also want to remove the ingredients from the pantry?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => handleDeleteMeal(day.id, null)}
+                >
+                  Only remove meal
+                </AlertDialogAction>
+                <AlertDialogAction
+                  onClick={() => handleDeleteMeal(day.id, day.meal)}
+                >
+                  Remove meal and ingredients
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardTitle>
       </CardHeader>
       <CardContent>{children}</CardContent>
@@ -126,6 +169,7 @@ export default function WeekDisplay() {
     queryFn: () => getWeek(),
   });
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
+  // is this needed?
   const [draggingId, setDraggingId] = useState<UniqueIdentifier | null>(null);
 
   const addMeal = useMutation({
@@ -162,7 +206,9 @@ export default function WeekDisplay() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ day: values.day.day }),
+        body: JSON.stringify({
+          day: values.day.day,
+        }),
       });
 
       if (!response.ok) {
@@ -230,10 +276,14 @@ export default function WeekDisplay() {
     addMeal.mutate({ meal, day });
   };
 
-  const handleDeleteMeal = (dayId: string) => {
+  const handleDeleteMeal = (dayId: string, mealData: Meal | null) => {
     const day = sortedWeekData.find((d) => d.id === dayId);
-    if (day) {
+    if (day && mealData === null) {
       deleteMeal.mutate({ day });
+    } else if (day && mealData !== null) {
+      deleteMeal.mutate({ day });
+      updatePantry(mealData);
+      queryClient.invalidateQueries({ queryKey: ["pantryItems"] });
     } else {
       console.error("Day not found for id: ", dayId);
     }

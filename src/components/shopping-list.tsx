@@ -3,8 +3,21 @@ import { useState } from "react";
 import { useStorage, useMutation } from "@liveblocks/react/suspense";
 import "@liveblocks/react";
 import { LiveObject } from "@liveblocks/client";
+import generateShoppingList from "@/lib/generateShoppingList";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function ShoppingList() {
   const [draft, setDraft] = useState("");
@@ -19,8 +32,44 @@ export default function ShoppingList() {
     item?.set("checked", !item.get("checked"));
   }, []);
 
+  const deleteAll = useMutation(({ storage }) => {
+    storage.get("items").clear();
+  }, []);
+
+  const generateFromWeek = useMutation(({ storage }) => {
+    generateShoppingList().then((list) => {
+      for (const item of list) {
+        storage.get("items").push(new LiveObject({ text: item }));
+      }
+    });
+  }, []);
+
   return (
     <div className="flex flex-col gap-3">
+      <div className="flex gap-2">
+        <Button variant="outline" onClick={() => generateFromWeek()}>
+          Generate from week
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive">Clear list</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will clear the entire shopping list.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => deleteAll()}>
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
       <Input
         type="text"
         autoFocus={true}

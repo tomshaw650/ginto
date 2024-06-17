@@ -6,3 +6,11 @@ export type Item = {
     unit: string | null;
   } | null;
 };
+
+export type IngredientItem = {
+  id: string;
+  item: {
+    name: string;
+    unit: string | null;
+  } | null;
+};

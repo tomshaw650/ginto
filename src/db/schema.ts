@@ -70,3 +70,13 @@ export const pantry = pgTable("pantry", {
     unit: string | null;
   }>(),
 });
+
+export const ingredients = pgTable("ingredients", {
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  item: jsonb("item").$type<{
+    name: string;
+    unit: string | null;
+  }>(),
+});
