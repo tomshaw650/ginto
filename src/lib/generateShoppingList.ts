@@ -28,7 +28,9 @@ export default async function generateShoppingList() {
           continue;
         }
 
-        const requiredQuantity = Math.max(quantity - pantryItem.quantity, 0);
+        const requiredQuantity = Math.ceil(
+          Math.max(quantity - pantryItem.quantity, 0),
+        );
 
         if (requiredQuantity > 0) {
           const existingItem = shoppingListMap.get(name);
@@ -43,7 +45,11 @@ export default async function generateShoppingList() {
   }
 
   shoppingListMap.forEach((value, key) => {
-    shoppingList.push(`${key} ${value.quantity}${value.unit}`);
+    shoppingList.push({
+      name: key,
+      quantity: value.quantity,
+      unit: value.unit,
+    });
   });
 
   return shoppingList;

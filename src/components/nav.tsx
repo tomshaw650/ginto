@@ -4,8 +4,8 @@ import SignoutButton from "./sign-out";
 
 const navLinks = [
   { name: "Home", href: "/home" },
-  { name: "Meals", href: "/meals" },
   { name: "List", href: "/list" },
+  { name: "Meals", href: "/meals" },
   { name: "Pantry", href: "/pantry" },
   { name: "Ingredients", href: "/ingredients" },
 ];

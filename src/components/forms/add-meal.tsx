@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Item } from "@/types/item";
+import type { IngredientItem } from "@/types/item";
 import { mealSchema } from "@/schemas/mealSchema";
 import AddIngredient from "@/components/add-ingredient";
 import { Label } from "@/components/ui/label";
@@ -77,7 +77,7 @@ export default function AddMealForm() {
   };
 
   const handleIngredientSelect =
-    (index: number) => (ingredient: Item | null) => {
+    (index: number) => (ingredient: IngredientItem | null) => {
       setValue(`ingredients.${index}.name`, ingredient!.item!.name);
       setValue(`ingredients.${index}.unit`, ingredient!.item!.unit);
     };

@@ -9,6 +9,10 @@ export const getPantryItems = async () => {
   return allPantryItems;
 };
 
+export const addPantryItem = async (item: any) => {
+  await db.insert(pantry).values(item);
+};
+
 export const deleteItem = async (id: string) => {
   await db.delete(pantry).where(eq(pantry.id, id));
 };
