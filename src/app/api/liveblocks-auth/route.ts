@@ -2,7 +2,7 @@ import { validateRequest } from "@/lib/auth";
 import { Liveblocks } from "@liveblocks/node";
 
 const liveblocks = new Liveblocks({
-  secret: process.env.NEXT_PUBLIC_LIVEBLOCKS_SECRET!,
+  secret: process.env.LIVEBLOCKS_SECRET!,
 });
 
 export async function POST(request: Request) {
