@@ -9,8 +9,12 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  manifest: "/manifest.json",
   title: "Ginto",
-  description: "Weekly meal and shopping app for my wife and I",
+  description: "Weekly meal and shopping app for Georgia and I",
+  icons: {
+    icon: "/logo72x72.png",
+  },
 };
 
 export default function RootLayout({

@@ -2,6 +2,9 @@
 
 .env
 drizzle
+sw.*
+workbox-*
+swe-worker-*
 
 # dependencies
 /node_modules
