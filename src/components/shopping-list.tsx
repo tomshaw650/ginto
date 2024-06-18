@@ -100,11 +100,11 @@ export default function ShoppingList() {
     for (const item of list) {
       if (item.checked) {
         // Split item.text into name, quantity, and unit
-        const match = item.text.match(/^([\w\s]+)\s+(\d*\.?\d+)\s*(\w+)$/);
+        const match = item.text.match(/^([\w\s'’.-]+)\s+(\d*\.?\d+)\s*(\w+)$/);
         if (match) {
-          const name = match[1].trim(); // Extract name and trim whitespace
-          const quantity = parseFloat(match[2]); // Extract quantity as float
-          const unit = match[3]; // Extract unit
+          const name = match[1].trim();
+          const quantity = parseFloat(match[2]);
+          const unit = match[3];
           checkedItems.push({ name, quantity, unit });
         } else {
           console.warn(`Failed to parse item: ${item.text}`);
@@ -172,7 +172,6 @@ export default function ShoppingList() {
       </div>
       <Input
         type="text"
-        autoFocus={true}
         className="w-[300px] border-none"
         placeholder="Add an item to the list..."
         value={draft}

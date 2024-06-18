@@ -1,30 +1,38 @@
 "use client";
-import { Plus, Minus } from "lucide-react";
+import { useState } from "react";
+import { Plus, Minus, Camera, CameraOff } from "lucide-react";
 import { z } from "zod";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import getFoodData from "@/lib/getFoodData";
 import { ingredientsSchema } from "@/schemas/ingredient";
+import BarcodeScanner from "../barcode-scanner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export default function AddIngredientsForm() {
   const queryClient = useQueryClient();
-  const { register, control, handleSubmit, reset, setFocus } = useForm<
-    z.infer<typeof ingredientsSchema>
-  >({
-    resolver: zodResolver(ingredientsSchema),
-    defaultValues: {
-      items: [
-        {
-          name: "",
-          unit: null,
-        },
-      ],
-    },
-  });
+  const { register, control, handleSubmit, reset, setFocus, setValue } =
+    useForm<z.infer<typeof ingredientsSchema>>({
+      resolver: zodResolver(ingredientsSchema),
+      defaultValues: {
+        items: [
+          {
+            name: "",
+            unit: null,
+          },
+        ],
+      },
+    });
+  const [isScanning, setIsScanning] = useState(false);
 
   const { fields, append, remove } = useFieldArray({
     name: "items",
@@ -127,6 +135,28 @@ export default function AddIngredientsForm() {
                 autoComplete="off"
               />
             </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button className="bg-purple-400 hover:bg-purple-500">
+                  <Camera />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <BarcodeScanner
+                  onCapture={async (data: any) => {
+                    try {
+                      const foodData = await getFoodData(data.rawValue);
+                      if (foodData) {
+                        setValue(`items.${index}.name`, foodData.name);
+                        setValue(`items.${index}.unit`, foodData.unit);
+                      }
+                    } catch (error) {
+                      console.error("Error setting food data:", error);
+                    }
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
         ))}
         <div className="px-2"></div>
