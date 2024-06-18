@@ -10,10 +10,9 @@ export default async function getFoodData(barcode: string) {
 
     const data = await response.json();
 
-    console.log(data);
-
     return {
       name: data.product.product_name_en,
+      amount: data.product.product_quantity,
       unit:
         data.product.product_quantity_unit ||
         data.product.serving_quantity_unit,

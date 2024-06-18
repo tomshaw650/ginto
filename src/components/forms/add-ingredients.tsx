@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Plus, Minus, Camera, CameraOff } from "lucide-react";
+import { Plus, Minus, Camera } from "lucide-react";
 import { z } from "zod";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -135,7 +135,7 @@ export default function AddIngredientsForm() {
                 autoComplete="off"
               />
             </div>
-            <Popover>
+            <Popover open={isScanning} onOpenChange={setIsScanning}>
               <PopoverTrigger asChild>
                 <Button className="bg-purple-400 hover:bg-purple-500">
                   <Camera />
@@ -149,6 +149,7 @@ export default function AddIngredientsForm() {
                       if (foodData) {
                         setValue(`items.${index}.name`, foodData.name);
                         setValue(`items.${index}.unit`, foodData.unit);
+                        setIsScanning(false);
                       }
                     } catch (error) {
                       console.error("Error setting food data:", error);
