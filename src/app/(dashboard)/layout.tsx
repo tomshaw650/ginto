@@ -1,4 +1,5 @@
 import NavHeader from "@/components/nav";
+import SignoutButton from "@/components/sign-out";
 
 export default function DashboardLayout({
   children,
@@ -7,7 +8,9 @@ export default function DashboardLayout({
 }>) {
   return (
     <>
-      <NavHeader />
+      <NavHeader>
+        <SignoutButton />
+      </NavHeader>
       {children}
     </>
   );

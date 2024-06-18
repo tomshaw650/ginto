@@ -6,18 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import SignoutButton from "@/components/sign-out";
 
 export default async function Page() {
   const { user } = await validateRequest();
 
   // if user already logged in
   if (user) {
-    return redirect("/home");
+    return redirect("/list");
   }
 
   return (
     <>
-      <NavHeader landing />
+      <NavHeader>
+        <SignoutButton />
+      </NavHeader>
       <div className="mt-32 flex h-fit max-w-md flex-col items-center justify-center">
         <h1 className="text-rem mb-5 text-4xl">Sign in to Ginto</h1>
         <form action={login}>

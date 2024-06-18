@@ -58,7 +58,7 @@ export async function login(formData: FormData): Promise<ActionResult> {
     sessionCookie.value,
     sessionCookie.attributes,
   );
-  return redirect("/home");
+  return redirect("/list");
 }
 
 export async function guest(): Promise<ActionResult> {
@@ -82,7 +82,7 @@ export async function guest(): Promise<ActionResult> {
     sessionCookie.value,
     sessionCookie.attributes,
   );
-  return redirect("/home");
+  return redirect("/list");
 }
 
 interface ActionResult {

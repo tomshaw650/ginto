@@ -186,7 +186,7 @@ export default function ShoppingList() {
           }
         }}
       />
-      <div className="mx-2 flex w-full flex-col gap-2 overflow-y-auto">
+      <div className="flex max-h-[510px] w-full flex-col gap-2 overflow-y-scroll px-10">
         {list.map((item, index) => (
           <div key={index}>
             <Checkbox

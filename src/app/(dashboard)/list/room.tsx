@@ -6,6 +6,7 @@ import {
   ClientSideSuspense,
 } from "@liveblocks/react/suspense";
 import { LiveList } from "@liveblocks/client";
+import { LoadingSpinner } from "@/components/spinner";
 
 export function Room({ children }: { children: ReactNode }) {
   return (
@@ -15,7 +16,7 @@ export function Room({ children }: { children: ReactNode }) {
         initialPresence={{}}
         initialStorage={{ items: new LiveList([]) }}
       >
-        <ClientSideSuspense fallback={<div>Loading…</div>}>
+        <ClientSideSuspense fallback={<LoadingSpinner />}>
           {children}
         </ClientSideSuspense>
       </RoomProvider>
