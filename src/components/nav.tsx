@@ -26,26 +26,28 @@ export default function NavHeader(props: NavHeaderProps) {
   return (
     <header className="flex h-20 w-screen flex-row items-center justify-center">
       <nav className="flex items-center space-x-6">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left">
-            <ThemeToggle />
-            {!props.landing ? (
-              <div className="my-10 flex flex-col gap-3">
-                {navLinks.map((link) => (
-                  <SheetClose key={link.name} asChild>
-                    <Link href={link.href}>{link.name}</Link>
-                  </SheetClose>
-                ))}
-              </div>
-            ) : null}
-            {!props.landing && <SignoutButton />}
-          </SheetContent>
-        </Sheet>
+        {!props.landing ? (
+          <>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left">
+                <div className="my-10 flex flex-col gap-3">
+                  {navLinks.map((link) => (
+                    <SheetClose key={link.name} asChild>
+                      <Link href={link.href}>{link.name}</Link>
+                    </SheetClose>
+                  ))}
+                </div>
+              </SheetContent>
+            </Sheet>
+            <SignoutButton />
+          </>
+        ) : null}
+        <ThemeToggle />
       </nav>
     </header>
   );

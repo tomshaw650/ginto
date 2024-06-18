@@ -12,9 +12,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   title: "Ginto",
   description: "Weekly meal and shopping app for Georgia and I",
-  icons: {
-    icon: "/logo72x72.png",
-  },
+  icons: "/favicon.ico",
 };
 
 export default function RootLayout({
