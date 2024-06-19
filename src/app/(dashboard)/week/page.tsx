@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { redirect } from "next/navigation";
 import {
   dehydrate,
@@ -23,8 +24,10 @@ export default async function Page() {
   }
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <WeekDisplay />
-    </HydrationBoundary>
+    <>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <WeekDisplay />
+      </HydrationBoundary>
+    </>
   );
 }

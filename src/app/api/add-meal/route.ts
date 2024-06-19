@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       .set({ meal: items.meal })
       .where(eq(week.day, items.day));
 
-    revalidatePath("/home");
+    revalidatePath("/week");
 
     return Response.json({ status: 200, message: "Meal created succesfully" });
   } catch (err) {

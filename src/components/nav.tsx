@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Menu,
-  Home,
+  CalendarDays,
   ShoppingBasket,
   Soup,
   Ham,
@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sheet";
 
 const navLinks = [
-  { name: "Home", href: "/home", icon: <Home className="h-5 w-5" /> },
+  { name: "Week", href: "/week", icon: <CalendarDays className="h-5 w-5" /> },
   { name: "List", href: "/list", icon: <ShoppingBasket className="h-5 w-5" /> },
   { name: "Meals", href: "/meals", icon: <Soup className="h-5 w-5" /> },
   {

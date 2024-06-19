@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     await db.update(week).set({ meal: meal2 }).where(eq(week.day, day1));
     await db.update(week).set({ meal: meal1 }).where(eq(week.day, day2));
 
-    revalidatePath("/home");
+    revalidatePath("/week");
 
     return NextResponse.json({ status: 200, message: "Meals swapped" });
   } catch (err) {

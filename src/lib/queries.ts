@@ -66,5 +66,5 @@ export const getWeek = async () => {
 
 export const addMeal = async (meal: any, day: string) => {
   await db.update(week).set({ meal: meal }).where(eq(week.day, day));
-  revalidatePath("/home");
+  revalidatePath("/week");
 };
