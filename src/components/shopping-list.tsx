@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useStorage, useMutation, useSelf } from "@liveblocks/react/suspense";
+import { useStorage, useMutation, useSelf, useStatus } from "@liveblocks/react/suspense";
 import "@liveblocks/react";
 import { LiveObject } from "@liveblocks/client";
 import { toast } from "sonner";
@@ -20,11 +20,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useCopyToClipboard } from "usehooks-ts";
 
 export default function ShoppingList() {
   const [draft, setDraft] = useState("");
   const list = useStorage((root) => root.items);
   const { role } = useSelf((me) => me.info);
+  const connectionStatus = useStatus();
+  const [copiedText, copyToClipboard] = useCopyToClipboard();
+  const hasCopiedText = Boolean(copiedText);
 
   const addItem = useMutation(({ storage }, text) => {
     try {
@@ -145,7 +149,16 @@ export default function ShoppingList() {
 
   return (
     <div className="flex flex-col items-center gap-3">
+      <div className="text-xs">{connectionStatus}</div>
       <div className="flex gap-2">
+        <Button
+            variant="ghost"
+            disabled={hasCopiedText}
+            className="link"
+            onClick={() => copyToClipboard(list.map(item => item.text).join("\n"))}
+          >
+            Copy to clipboard
+          </Button>
         <Button variant="outline" onClick={() => generateFromWeek()}>
           Generate from week
         </Button>
