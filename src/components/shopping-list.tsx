@@ -152,17 +152,17 @@ export default function ShoppingList() {
       <div className="text-xs">{connectionStatus}</div>
       <div className="flex gap-2">
         <Button
-            variant="ghost"
+            variant="outline"
             disabled={hasCopiedText}
-            className="link"
+            className="link bg-blue-400 text-white hover:bg-blue-300 hover:text-white"
             onClick={() => copyToClipboard(list.map(item => item.text).join("\n"))}
           >
             Copy to clipboard
           </Button>
-        <Button variant="outline" onClick={() => generateFromWeek()}>
+        {/* <Button variant="outline" onClick={() => generateFromWeek()}>
           Generate from week
-        </Button>
-        <Button onClick={() => addCheckedItemsToPantry()}>Update pantry</Button>
+        </Button> */}
+        {/* <Button onClick={() => addCheckedItemsToPantry()}>Update pantry</Button> */}
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="destructive">Clear list</Button>
